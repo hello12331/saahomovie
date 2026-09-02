@@ -1,0 +1,314 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+  CINEMA_MANAGER
+  EVENT_MANAGER
+}
+
+enum SeatCategory {
+  VIP
+  PREMIUM
+  EXECUTIVE
+  REGULAR
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum EventCategory {
+  CONCERT
+  COMEDY
+  THEATRE
+  WORKSHOP
+  FESTIVAL
+  NIGHTLIFE
+  SPORTS
+}
+
+model User {
+  id               String          @id @default(uuid())
+  name             String
+  email            String          @unique
+  passwordHash     String
+  phone            String?
+  role             Role            @default(USER)
+  avatar           String?
+  savedCity        String          @default("Hyderabad")
+  cineCoinsBalance Int             @default(0)
+  seatPreference   String?         
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  bookings         Booking[]
+  reviews          Review[]
+  wishlists        Wishlist[]
+  notifications    Notification[]
+  seatLocks        SeatLock[]
+}
+
+model Movie {
+  id            String      @id @default(uuid())
+  title         String
+  poster        String
+  backdrop      String
+  description   String
+  genre         String      
+  language      String      
+  durationMins  Int
+  certification String      
+  releaseDate   DateTime
+  cast          String      
+  crew          String      
+  trailerUrl    String
+  rating        Float       @default(0.0)
+  ratingCount   Int         @default(0)
+  isPublished   Boolean     @default(true)
+  isTrending    Boolean     @default(false)
+  isUpcoming    Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+
+  shows         Show[]
+  reviews       Review[]
+  wishlists     Wishlist[]
+}
+
+model Cinema {
+  id         String   @id @default(uuid())
+  name       String
+  city       String
+  address    String
+  latitude   Float?
+  longitude  Float?
+  facilities String   
+  createdAt  DateTime @default(now())
+
+  screens    Screen[]
+  shows      Show[]
+}
+
+model Screen {
+  id          String   @id @default(uuid())
+  cinemaId    String
+  cinema      Cinema   @relation(fields: [cinemaId], references: [id], onDelete: Cascade)
+  name        String   
+  screenType  String   
+  totalRows   Int
+  seatsPerRow Int
+  createdAt   DateTime @default(now())
+
+  seats       Seat[]
+  shows       Show[]
+}
+
+model Seat {
+  id           String       @id @default(uuid())
+  screenId     String
+  screen       Screen       @relation(fields: [screenId], references: [id], onDelete: Cascade)
+  rowLabel     String       
+  seatNumber   Int          
+  category     SeatCategory @default(REGULAR)
+  isAccessible Boolean      @default(false)
+  isBlocked    Boolean      @default(false)
+
+  bookingSeats BookingSeat[]
+  seatLocks    SeatLock[]
+
+  @@unique([screenId, rowLabel, seatNumber])
+}
+
+model Show {
+  id           String   @id @default(uuid())
+  movieId      String
+  movie        Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  cinemaId     String
+  cinema       Cinema   @relation(fields: [cinemaId], references: [id], onDelete: Cascade)
+  screenId     String
+  screen       Screen   @relation(fields: [screenId], references: [id], onDelete: Cascade)
+  startTime    DateTime
+  endTime      DateTime
+  format       String   
+  language     String
+  vipPrice     Float
+  premiumPrice Float
+  execPrice    Float
+  regularPrice Float
+  createdAt    DateTime @default(now())
+
+  bookings     Booking[]
+  seatLocks    SeatLock[]
+}
+
+model SeatLock {
+  id        String   @id @default(uuid())
+  showId    String
+  show      Show     @relation(fields: [showId], references: [id], onDelete: Cascade)
+  seatId    String
+  seat      Seat     @relation(fields: [seatId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([showId, seatId])
+}
+
+model Event {
+  id           String        @id @default(uuid())
+  title        String
+  category     EventCategory
+  banner       String
+  description  String
+  venue        String
+  city         String
+  eventDate    DateTime
+  startTime    String
+  durationMins Int
+  organizer    String
+  price        Float
+  capacity     Int
+  bookedCount  Int           @default(0)
+  isPublished  Boolean       @default(true)
+  isFeatured   Boolean       @default(false)
+  terms        String?
+  createdAt    DateTime      @default(now())
+
+  bookings     Booking[]
+  wishlists    Wishlist[]
+}
+
+model FoodItem {
+  id          String   @id @default(uuid())
+  name        String
+  category    String   
+  image       String
+  description String
+  price       Float
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  orderItems  FoodOrderItem[]
+}
+
+model Booking {
+  id              String        @id @default(uuid())
+  bookingCode     String        @unique 
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  showId          String?
+  show            Show?         @relation(fields: [showId], references: [id], onDelete: SetNull)
+  eventId         String?
+  event           Event?        @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  ticketAmount    Float
+  foodAmount      Float         @default(0)
+  convenienceFee  Float         @default(0)
+  taxAmount       Float         @default(0)
+  discountAmount  Float         @default(0)
+  totalAmount     Float
+  cineCoinsEarned Int           @default(0)
+  cineCoinsUsed   Int           @default(0)
+  status          BookingStatus @default(CONFIRMED)
+  createdAt       DateTime      @default(now())
+
+  bookingSeats    BookingSeat[]
+  foodOrders      FoodOrderItem[]
+  payment         Payment?
+}
+
+model BookingSeat {
+  id        String   @id @default(uuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  seatId    String
+  seat      Seat     @relation(fields: [seatId], references: [id], onDelete: Cascade)
+  price     Float
+
+  @@unique([bookingId, seatId])
+}
+
+model FoodOrderItem {
+  id         String   @id @default(uuid())
+  bookingId  String
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  foodItemId String
+  foodItem   FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+  quantity   Int
+  unitPrice  Float
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  bookingId     String        @unique
+  booking       Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  paymentMethod String        
+  transactionId String        @unique
+  amount        Float
+  status        PaymentStatus @default(SUCCESS)
+  createdAt     DateTime      @default(now())
+}
+
+model Coupon {
+  id           String   @id @default(uuid())
+  code         String   @unique 
+  description  String
+  discountType String   
+  discountVal  Float
+  minAmount    Float    @default(0)
+  maxDiscount  Float?
+  validUntil   DateTime
+  isActive     Boolean  @default(true)
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movieId   String?
+  movie     Movie?   @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  rating    Int      
+  comment   String
+  createdAt DateTime @default(now())
+}
+
+model Wishlist {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movieId   String?
+  movie     Movie?   @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  eventId   String?
+  event     Event?   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, movieId, eventId])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
