@@ -27,10 +27,11 @@ export async function sendEmail({
 
   try {
     const serviceId = process.env.EMAILJS_SERVICE_ID || EMAILJS_CONFIG.serviceId;
-    const templateId = EMAILJS_CONFIG.templateIdOtp;
+    const templateId = EMAILJS_CONFIG.templateIdOtp; // template_7g5h46g
     const publicKey = process.env.EMAILJS_PUBLIC_KEY || EMAILJS_CONFIG.publicKey;
+    const privateKey = process.env.EMAILJS_PRIVATE_KEY || EMAILJS_CONFIG.privateKey;
 
-    // Send via EmailJS REST API with Origin header to allow Node.js server-side calls
+    // Send via EmailJS REST API
     const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
       method: 'POST',
       headers: {
@@ -41,6 +42,7 @@ export async function sendEmail({
         service_id: serviceId,
         template_id: templateId,
         user_id: publicKey,
+        accessToken: privateKey,
         template_params: {
           to_email: to,
           email: to,
@@ -48,6 +50,11 @@ export async function sendEmail({
           time: new Date(Date.now() + 15 * 60 * 1000).toLocaleTimeString(),
           subject: subject,
           message: text || html,
+          booking_code: templateParams.bookingCode || '',
+          movie_title: templateParams.movieTitle || '',
+          cinema_name: templateParams.cinemaName || '',
+          seats: templateParams.seats || '',
+          total_amount: templateParams.totalAmount || '',
           ...templateParams
         }
       })
@@ -58,11 +65,7 @@ export async function sendEmail({
       console.log(`[EmailJS Success] Real email sent via Service ${serviceId} (Template: ${templateId}) to ${to}`);
     } else {
       console.warn(`[EmailJS Notice] Status ${res.status}: ${respText}`);
-      if (res.status === 403) {
-        errorMessage = `EmailJS Security restriction: Enable API access from non-browser environments at https://dashboard.emailjs.com/admin/account/security or client-side fetch. (${respText})`;
-      } else {
-        errorMessage = respText;
-      }
+      errorMessage = respText;
     }
 
     // SMTP Fallback if configured
@@ -82,7 +85,6 @@ export async function sendEmail({
         html,
         text
       });
-      console.log(`[SMTP Service] Email sent to ${to} for subject: ${subject}`);
     }
   } catch (err: any) {
     status = 'FAILED';
@@ -134,7 +136,7 @@ export function generateBookingConfirmationHtml(booking: any) {
     <div style="font-family: Arial, sans-serif; background-color: #0F1117; color: #ffffff; padding: 40px 20px; max-width: 600px; margin: auto;">
       <div style="text-align: center; margin-bottom: 24px;">
         <h1 style="color: #FF4D6D; margin: 0;">Cine<span style="color: #ffffff;">Go</span></h1>
-        <h2 style="color: #4ADE80; font-size: 22px;">🎉 Booking Confirmed!</h2>
+        <h2 style="color: #4ADE80; font-size: 22px;">🎉 Ticket Booking Confirmed!</h2>
       </div>
 
       <div style="background-color: #171A23; border: 1px solid #20232D; padding: 24px; border-radius: 12px; margin-bottom: 20px;">
@@ -155,22 +157,6 @@ export function generateBookingConfirmationHtml(booking: any) {
       </div>
 
       <p style="color: #A8ACB8; font-size: 12px; text-align: center;">Please show your digital pass QR at cinema entry. Enjoy your show!</p>
-    </div>
-  `;
-}
-
-// 3. Booking Cancellation Email Template
-export function generateCancellationHtml(booking: any, refundAmount: number) {
-  return `
-    <div style="font-family: Arial, sans-serif; background-color: #0F1117; color: #ffffff; padding: 40px 20px; max-width: 600px; margin: auto;">
-      <h1 style="color: #FF4D6D; text-align: center;">CineGo</h1>
-      <div style="background-color: #171A23; border: 1px solid #20232D; padding: 24px; border-radius: 12px;">
-        <h2 style="color: #F87171; margin-top: 0;">Booking Cancelled</h2>
-        <p style="font-size: 14px;">Booking ID: <strong>${booking.bookingCode}</strong></p>
-        <p style="font-size: 14px;">Original Amount: ₹${booking.totalAmount}</p>
-        <p style="font-size: 14px; color: #4ADE80;"><strong>Refund Amount (85%): ₹${refundAmount}</strong></p>
-        <p style="font-size: 12px; color: #A8ACB8;">Refund has been processed to your original payment method.</p>
-      </div>
     </div>
   `;
 }
