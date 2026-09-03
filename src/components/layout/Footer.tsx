@@ -14,13 +14,13 @@ export default function Footer() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#F84464] to-[#7C5CFC] flex items-center justify-center font-black text-white text-lg">
                 S
               </div>
-              <span className="text-xl font-extrabold text-slate-900">Saaho <span className="text-[#F84464]">Movie Counter</span></span>
+              <span className="text-xl font-extrabold text-slate-900">Saaho <span className="text-[#F84464]">Movie Ticket Counter</span></span>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed max-w-sm">
-              Saaho Movie Counter is your official entertainment destination for movie tickets, live concerts, sports events, comedy shows, and cinema dining.
+              Saaho Movie Ticket Counter is your official entertainment destination for movie tickets, live concerts, sports events, comedy shows, and cinema dining.
             </p>
             <p className="text-[11px] text-slate-400">
-              © 2026 Saaho Movie Counter Platform. All rights reserved. Designed for premium experience.
+              © 2026 Saaho Movie Ticket Counter Platform. All rights reserved. Designed for premium experience.
             </p>
           </div>
 

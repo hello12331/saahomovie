@@ -62,7 +62,7 @@ export default function Header() {
                 </div>
                 <div>
                   <span className="text-2xl font-black tracking-wider text-slate-900">
-                    Saaho <span className="text-[#F84464]">Movie Counter</span>
+                    Saaho <span className="text-[#F84464]">Movie Ticket Counter</span>
                   </span>
                   <span className="block text-[8px] uppercase tracking-widest text-slate-500 -mt-1 font-bold">
                     Official Ticket Booking
