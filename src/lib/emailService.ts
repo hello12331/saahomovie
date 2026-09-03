@@ -35,7 +35,9 @@ export async function sendEmail({
     const publicKey = process.env.EMAILJS_PUBLIC_KEY || EMAILJS_CONFIG.publicKey;
     const privateKey = process.env.EMAILJS_PRIVATE_KEY || EMAILJS_CONFIG.privateKey;
 
-    // Send via EmailJS REST API
+    const otpValue = templateParams.otp || templateParams.passcode || '849201';
+
+    // Send via EmailJS REST API mapping every common OTP variable name
     const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
       method: 'POST',
       headers: {
@@ -50,8 +52,12 @@ export async function sendEmail({
         template_params: {
           to_email: to,
           email: to,
-          passcode: templateParams.otp || templateParams.passcode || '849201',
-          time: new Date(Date.now() + 15 * 60 * 1000).toLocaleTimeString(),
+          passcode: otpValue,
+          otp: otpValue,
+          otp_code: otpValue,
+          code: otpValue,
+          password: otpValue,
+          time: '15 minutes',
           subject: subject,
           message: text || html,
           booking_code: templateParams.bookingCode || '',
@@ -66,7 +72,7 @@ export async function sendEmail({
 
     const respText = await res.text();
     if (res.ok) {
-      console.log(`[EmailJS Success] Real email sent via Service ${serviceId} (Template: ${templateId}) to ${to}`);
+      console.log(`[EmailJS Success] Real email sent via Service ${serviceId} (Template: ${templateId}) to ${to} with OTP ${otpValue}`);
     } else {
       console.warn(`[EmailJS Notice] Status ${res.status}: ${respText}`);
       errorMessage = respText;
