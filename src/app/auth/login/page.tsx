@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Mail, KeyRound, MapPin, User, ShieldCheck, Sparkles, AlertCircle, ArrowRight } from 'lucide-react';
+import { Mail, KeyRound, MapPin, User, ShieldCheck, AlertCircle, ArrowRight } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
 export default function AuthLoginPage() {
@@ -19,7 +19,6 @@ export default function AuthLoginPage() {
   // OTP flow state
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
-  const [devOtpHint, setDevOtpHint] = useState('');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState({ text: '', isError: false });
 
@@ -53,8 +52,7 @@ export default function AuthLoginPage() {
       const data = await res.json();
       if (data.success) {
         setOtpSent(true);
-        if (data.otpCode) setDevOtpHint(data.otpCode);
-        setMsg({ text: `OTP sent successfully to ${email}. Check your email or subject line!`, isError: false });
+        setMsg({ text: `OTP sent successfully! Please check your email inbox at ${email}.`, isError: false });
       } else {
         setMsg({ text: data.error || 'Failed to send OTP.', isError: true });
       }
@@ -163,13 +161,6 @@ export default function AuthLoginPage() {
           }`}>
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span>{msg.text}</span>
-          </div>
-        )}
-
-        {/* OTP Hint Box for instant testing convenience */}
-        {devOtpHint && (
-          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono text-center">
-            🔑 Generated 6-Digit OTP Code: <strong className="text-white text-sm underline">{devOtpHint}</strong>
           </div>
         )}
 
