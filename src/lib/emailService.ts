@@ -26,37 +26,38 @@ export async function sendEmail({
   let errorMessage = null;
 
   try {
-    // 1. Try EmailJS API if SERVICE_ID service_766n4tq / API keys are passed
     const serviceId = process.env.EMAILJS_SERVICE_ID || EMAILJS_CONFIG.serviceId;
-    const userIdKey = process.env.EMAILJS_PUBLIC_KEY || process.env.EMAILJS_USER_ID;
+    const templateId = EMAILJS_CONFIG.templateIdOtp;
+    const publicKey = process.env.EMAILJS_PUBLIC_KEY || EMAILJS_CONFIG.publicKey;
 
-    if (serviceId && userIdKey) {
-      const templateId = emailType.includes('OTP') ? EMAILJS_CONFIG.templateIdOtp : EMAILJS_CONFIG.templateIdBooking;
-      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service_id: serviceId,
-          template_id: templateId,
-          user_id: userIdKey,
-          template_params: {
-            to_email: to,
-            subject: subject,
-            email: to,
-            message_html: html,
-            ...templateParams
-          }
-        })
-      });
-      if (res.ok) {
-        console.log(`[EmailJS Service] Email successfully sent via Service ${serviceId} to ${to}`);
-      } else {
-        const errTxt = await res.text();
-        console.warn(`[EmailJS Warning] Status ${res.status}: ${errTxt}`);
-      }
+    // Send via EmailJS REST API
+    const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: serviceId,
+        template_id: templateId,
+        user_id: publicKey,
+        template_params: {
+          to_email: to,
+          email: to,
+          passcode: templateParams.otp || templateParams.passcode || '849201',
+          time: new Date(Date.now() + 15 * 60 * 1000).toLocaleTimeString(),
+          subject: subject,
+          message: text || html,
+          ...templateParams
+        }
+      })
+    });
+
+    if (res.ok) {
+      console.log(`[EmailJS Service] Email successfully sent via Service ${serviceId} (Template: ${templateId}) to ${to}`);
+    } else {
+      const errTxt = await res.text();
+      console.warn(`[EmailJS Notice] Status ${res.status}: ${errTxt}`);
     }
 
-    // 2. Try Nodemailer SMTP fallback if env SMTP variables are present
+    // SMTP Fallback if configured
     const user = process.env.EMAIL_USERNAME || process.env.EMAIL_USER;
     const pass = process.env.EMAIL_PASSWORD || process.env.EMAIL_PASS;
 
@@ -75,13 +76,10 @@ export async function sendEmail({
       });
       console.log(`[SMTP Service] Email sent to ${to} for subject: ${subject}`);
     } else {
-      // 3. Fallback Dev Mode Audit Output
-      console.log(`\n=================== [EMAIL SERVICE (Service ID: ${serviceId})] ===================`);
+      console.log(`\n=================== [EMAIL SERVICE (${serviceId} / ${templateId})] ===================`);
       console.log(`RECIPIENT TO: ${to}`);
       console.log(`SUBJECT: ${subject}`);
-      console.log(`TYPE: ${emailType}`);
-      console.log(`SERVICE ID: ${serviceId}`);
-      console.log(`HTML PREVIEW:\n${html.substring(0, 350)}...`);
+      console.log(`PASSCODE: ${templateParams.otp || 'N/A'}`);
       console.log(`=================================================================================\n`);
     }
   } catch (err: any) {
@@ -89,7 +87,6 @@ export async function sendEmail({
     errorMessage = err.message || 'Transmission failed';
     console.error(`[Email Service Error] Failed sending to ${to}:`, err);
   } finally {
-    // Log to EmailLog table
     try {
       await execute(`
         INSERT INTO EmailLog (id, userId, bookingId, emailType, recipient, subject, status, errorMessage)
@@ -121,7 +118,7 @@ export function generateOtpEmailHtml(userName: string, otp: string) {
           ${otp}
         </div>
         
-        <p style="color: #A8ACB8; font-size: 12px;">This OTP is valid for <strong>5 minutes</strong> till <strong>${new Date(Date.now() + 5*60*1000).toLocaleTimeString()}</strong>. Do not share this code with anyone.</p>
+        <p style="color: #A8ACB8; font-size: 12px;">This OTP is valid for <strong>15 minutes</strong> till <strong>${new Date(Date.now() + 15*60*1000).toLocaleTimeString()}</strong>. Do not share this code with anyone.</p>
       </div>
       
       <p style="color: #666; font-size: 11px; text-align: center; margin-top: 24px;">Regards,<br>CineGo Team</p>

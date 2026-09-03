@@ -10,29 +10,33 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Please enter a valid email address.' }, { status: 400 });
     }
 
-    // Generate secure 6-digit OTP
+    // Generate 6-digit OTP
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 min TTL
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 min TTL (matching your EmailJS template settings)
     const otpId = 'otp_' + Date.now();
 
-    // Invalidate existing unused OTPs for email
     await execute(`UPDATE OtpStore SET used = 1 WHERE email = ? AND purpose = ?`, [email.toLowerCase(), purpose]);
 
-    // Save new OTP
     await execute(`
       INSERT INTO OtpStore (id, email, otpCode, purpose, expiresAt)
       VALUES (?, ?, ?, ?, ?)
     `, [otpId, email.toLowerCase(), otpCode, purpose, expiresAt]);
 
-    // Send OTP via Email Service
-    const subject = purpose === 'LOGIN' ? 'Your CineGo Login OTP' : 'Reset Your CineGo Password OTP';
+    const subject = purpose === 'LOGIN' ? 'OTP for your from Saaho movie show' : 'Reset Your CineGo Password OTP';
     const html = generateOtpEmailHtml(userName, otpCode);
 
+    // Send via EmailJS Service service_766n4tq + Template template_7g5h46g
     await sendEmail({
       to: email.toLowerCase(),
       subject,
       html,
-      emailType: purpose
+      emailType: purpose,
+      templateParams: {
+        email: email.toLowerCase(),
+        passcode: otpCode,
+        otp: otpCode,
+        time: new Date(Date.now() + 15 * 60 * 1000).toLocaleTimeString()
+      }
     });
 
     return NextResponse.json({
