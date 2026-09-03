@@ -20,11 +20,10 @@ export async function POST(request: Request) {
     }
 
     const show = await queryOne(`
-      SELECT s.*, m.title as movieTitle, c.name as cinemaName, c.address as cinemaAddress, e.title as eventTitle
+      SELECT s.*, m.title as movieTitle, c.name as cinemaName, c.address as cinemaAddress
       FROM Show s
       LEFT JOIN Movie m ON s.movieId = m.id
       LEFT JOIN Cinema c ON s.cinemaId = c.id
-      LEFT JOIN Event e ON s.eventId = e.id
       WHERE s.id = ?
     `, [showId]);
 
@@ -99,7 +98,7 @@ export async function POST(request: Request) {
 
     const bookingObject = {
       bookingCode,
-      movieTitle: show.movieTitle || show.eventTitle || 'Saaho Movie Show',
+      movieTitle: show.movieTitle || 'Saaho Movie Show',
       cinemaName: show.cinemaName || 'Saaho Cinema',
       startTime: show.startTime,
       createdAt: new Date().toISOString(),
@@ -115,18 +114,19 @@ export async function POST(request: Request) {
     const html = generateBookingConfirmationHtml(bookingObject);
     await sendEmail({
       to: userEmail,
-      subject: `🎉 Booking Confirmed! Pass Code: ${bookingCode}`,
+      subject: `🎉 Ticket Booking Confirmed! Pass Code: ${bookingCode}`,
       html,
       emailType: 'TICKET_CONFIRMATION',
       bookingId,
       templateParams: {
         email: userEmail,
-        bookingCode,
+        to_email: userEmail,
+        booking_code: bookingCode,
         passcode: bookingCode,
-        movieTitle: show.movieTitle || show.eventTitle || 'Saaho Movie Show',
-        cinemaName: show.cinemaName || 'CineGo Cinema',
+        movie_title: show.movieTitle || 'Saaho Movie Show',
+        cinema_name: show.cinemaName || 'CineGo Cinema',
         seats: seatIds.join(', '),
-        totalAmount: `₹${totalAmount}`
+        total_amount: `₹${totalAmount}`
       }
     });
 

@@ -91,6 +91,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ showId: str
         body: JSON.stringify({
           showId,
           userId: user?.id || 'u_demo',
+          userEmail: user?.email || 'allinoneuser11@gmail.com',
           seatIds,
           seatPrices,
           foodOrders,
