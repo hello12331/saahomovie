@@ -1,11 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Tag, Shield, CreditCard, Check, AlertCircle } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
-export default function CheckoutPage({ params }: { params: { showId: string } }) {
+export default function CheckoutPage({ params }: { params: Promise<{ showId: string }> }) {
+  const resolvedParams = use(params);
+  const showId = resolvedParams.showId;
+
   const router = useRouter();
   const { user } = useApp();
 
@@ -17,13 +20,13 @@ export default function CheckoutPage({ params }: { params: { showId: string } })
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    const raw = sessionStorage.getItem(`booking_${params.showId}`);
+    const raw = sessionStorage.getItem(`booking_${showId}`);
     if (!raw) {
       router.push(`/movies`);
       return;
     }
     setBookingData(JSON.parse(raw));
-  }, [params.showId, router]);
+  }, [showId, router]);
 
   if (!bookingData) {
     return <div className="max-w-7xl mx-auto px-4 py-20 text-center text-slate-400">Loading checkout summary...</div>;
@@ -86,7 +89,7 @@ export default function CheckoutPage({ params }: { params: { showId: string } })
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          showId: params.showId,
+          showId,
           userId: user?.id || 'u_demo',
           seatIds,
           seatPrices,
@@ -98,7 +101,7 @@ export default function CheckoutPage({ params }: { params: { showId: string } })
 
       const resData = await res.json();
       if (resData.success) {
-        sessionStorage.removeItem(`booking_${params.showId}`);
+        sessionStorage.removeItem(`booking_${showId}`);
         router.push(`/booking/confirmation/${resData.bookingId}`);
       } else {
         alert(resData.error || 'Payment failed');
@@ -116,7 +119,7 @@ export default function CheckoutPage({ params }: { params: { showId: string } })
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Left Column: Coupon & Payment Gateway Choice */}
+        {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
           
           {/* Apply Coupon Box */}
@@ -169,7 +172,7 @@ export default function CheckoutPage({ params }: { params: { showId: string } })
                   className={`p-4 rounded-2xl border text-xs font-bold text-left transition-all ${
                     paymentMethod === pm.id
                       ? 'bg-[#FF4D6D]/20 border-[#FF4D6D] text-white'
-                      : 'bg-[#20232D] border-[#20232D] text-slate-400 hover:border-[#FF4D6D]/50'
+                      : 'bg-[#20232D] border-[#20232D] text-[#A8ACB8] hover:border-[#FF4D6D]/50'
                   }`}
                 >
                   {pm.label}
@@ -179,7 +182,7 @@ export default function CheckoutPage({ params }: { params: { showId: string } })
           </div>
         </div>
 
-        {/* Right Column: Final Price Summary & Pay CTA */}
+        {/* Right Column */}
         <div className="space-y-6">
           <div className="p-6 rounded-3xl bg-[#171A23] border border-[#20232D] space-y-6 sticky top-28">
             <h3 className="text-base font-bold text-white border-b border-[#20232D] pb-3">Payment Breakdown</h3>

@@ -1,10 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Minus, Popcorn, ChevronRight, ArrowLeft } from 'lucide-react';
 
-export default function FoodSelectionPage({ params }: { params: { showId: string } }) {
+export default function FoodSelectionPage({ params }: { params: Promise<{ showId: string }> }) {
+  const resolvedParams = use(params);
+  const showId = resolvedParams.showId;
+
   const router = useRouter();
   const [foodItems, setFoodItems] = useState<any[]>([]);
   const [selectedFood, setSelectedFood] = useState<{ [id: string]: number }>({});
@@ -41,7 +44,7 @@ export default function FoodSelectionPage({ params }: { params: { showId: string
   };
 
   const handleProceed = (skip = false) => {
-    const existing = JSON.parse(sessionStorage.getItem(`booking_${params.showId}`) || '{}');
+    const existing = JSON.parse(sessionStorage.getItem(`booking_${showId}`) || '{}');
 
     const foodOrdersList = skip ? [] : Object.keys(selectedFood).map(id => {
       const item = foodItems.find(f => f.id === id);
@@ -53,12 +56,12 @@ export default function FoodSelectionPage({ params }: { params: { showId: string
       };
     });
 
-    sessionStorage.setItem(`booking_${params.showId}`, JSON.stringify({
+    sessionStorage.setItem(`booking_${showId}`, JSON.stringify({
       ...existing,
       foodOrders: foodOrdersList
     }));
 
-    router.push(`/booking/checkout/${params.showId}`);
+    router.push(`/booking/checkout/${showId}`);
   };
 
   let totalFoodPrice = 0;

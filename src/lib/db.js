@@ -2,7 +2,6 @@ const path = require('path');
 const fs = require('fs');
 const sqlite3 = require('sqlite3').verbose();
 
-// Automatically ensure DB tables exist on first request if DB was cleared in serverless / cloud container
 const dbDir = path.join(process.cwd(), 'prisma');
 if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
@@ -10,7 +9,6 @@ if (!fs.existsSync(dbDir)) {
 
 const dbPath = path.join(dbDir, 'dev.db');
 
-// Run autoInit script if DB file doesn't exist
 if (!fs.existsSync(dbPath)) {
   try {
     require('../../prisma/autoInitDb.js');
@@ -48,7 +46,9 @@ function queryOne(sql, params = []) {
 function execute(sql, params = []) {
   return new Promise((resolve, reject) => {
     const db = getDb();
-    db.run(sql, params, function (err) {
+    // Safety check: if params is undefined or null, default to [] to prevent SQLITE_RANGE column index errors
+    const safeParams = Array.isArray(params) ? params : (params !== undefined && params !== null ? [params] : []);
+    db.run(sql, safeParams, function (err) {
       db.close();
       if (err) reject(err);
       else resolve({ lastID: this.lastID, changes: this.changes });

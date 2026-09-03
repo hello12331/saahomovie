@@ -1,17 +1,20 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { CheckCircle2, QrCode, Download, Printer, Calendar, Ticket, MapPin, Share2 } from 'lucide-react';
 
-export default function BookingConfirmationPage({ params }: { params: { bookingId: string } }) {
+export default function BookingConfirmationPage({ params }: { params: Promise<{ bookingId: string }> }) {
+  const resolvedParams = use(params);
+  const bookingId = resolvedParams.bookingId;
+
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchBooking() {
       try {
-        const res = await fetch(`/api/bookings/${params.bookingId}`);
+        const res = await fetch(`/api/bookings/${bookingId}`);
         const data = await res.json();
         if (data.success) {
           setBooking(data.booking);
@@ -23,7 +26,7 @@ export default function BookingConfirmationPage({ params }: { params: { bookingI
       }
     }
     fetchBooking();
-  }, [params.bookingId]);
+  }, [bookingId]);
 
   if (loading || !booking) {
     return <div className="max-w-7xl mx-auto px-4 py-20 text-center text-slate-400">Loading digital ticket...</div>;

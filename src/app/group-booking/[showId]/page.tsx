@@ -1,11 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import Link from 'next/link';
 import { Users, Share2, Copy } from 'lucide-react';
 
-export default function GroupBookingPage({ params }: { params: { showId: string } }) {
-  const shareLink = typeof window !== 'undefined' ? `${window.location.origin}/booking/seats/${params.showId}?group=true` : '';
+export default function GroupBookingPage({ params }: { params: Promise<{ showId: string }> }) {
+  const resolvedParams = use(params);
+  const showId = resolvedParams.showId;
+
+  const shareLink = typeof window !== 'undefined' ? `${window.location.origin}/booking/seats/${showId}?group=true` : '';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareLink);
@@ -28,7 +31,7 @@ export default function GroupBookingPage({ params }: { params: { showId: string 
           </button>
         </div>
 
-        <Link href={`/booking/seats/${params.showId}`} className="px-8 py-3.5 rounded-xl bg-[#FF4D6D] text-white font-bold text-sm inline-block shadow-lg">
+        <Link href={`/booking/seats/${showId}`} className="px-8 py-3.5 rounded-xl bg-[#FF4D6D] text-white font-bold text-sm inline-block shadow-lg">
           Select Seats Now
         </Link>
       </div>

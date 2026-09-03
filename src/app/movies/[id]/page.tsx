@@ -1,11 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { Star, Play, Share2, Heart, Clock, Calendar, Shield, X, ThumbsUp } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
-export default function MovieDetailsPage({ params }: { params: { id: string } }) {
+export default function MovieDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  const movieId = resolvedParams.id;
+
   const { city, toggleWishlist, wishlist } = useApp();
   const [movie, setMovie] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -15,7 +18,7 @@ export default function MovieDetailsPage({ params }: { params: { id: string } })
   useEffect(() => {
     async function fetchMovieDetails() {
       try {
-        const res = await fetch(`/api/movies/${params.id}`);
+        const res = await fetch(`/api/movies/${movieId}`);
         const data = await res.json();
         if (data.success) {
           setMovie(data.movie);
@@ -28,7 +31,7 @@ export default function MovieDetailsPage({ params }: { params: { id: string } })
       }
     }
     fetchMovieDetails();
-  }, [params.id]);
+  }, [movieId]);
 
   if (loading || !movie) {
     return <div className="max-w-7xl mx-auto px-4 py-20 text-center text-slate-400">Loading movie details...</div>;
@@ -38,8 +41,7 @@ export default function MovieDetailsPage({ params }: { params: { id: string } })
 
   return (
     <div className="space-y-12 pb-16">
-      
-      {/* Movie Details Backdrop Hero Header (matching Screenshot 5) */}
+      {/* Movie Details Backdrop Hero Header */}
       <div className="relative min-h-[460px] w-full bg-[#0F1117] overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center filter blur-md scale-110 opacity-30"
@@ -51,7 +53,7 @@ export default function MovieDetailsPage({ params }: { params: { id: string } })
         <div className="relative max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 py-10 flex items-center">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8 w-full">
             
-            {/* Poster with In Cinemas & Trailers Badge */}
+            {/* Poster */}
             <div className="relative w-48 sm:w-64 aspect-[2/3] rounded-3xl overflow-hidden border-2 border-[#20232D] shadow-2xl flex-shrink-0 bg-[#20232D]">
               <img src={movie.poster} alt={movie.title} className="w-full h-full object-cover" />
               <button
@@ -78,7 +80,7 @@ export default function MovieDetailsPage({ params }: { params: { id: string } })
                 </div>
               </div>
 
-              {/* Likes & Rating Widget Box (Matching Screenshot 5) */}
+              {/* Likes & Rating Widget Box */}
               <div className="p-4 rounded-2xl bg-[#171A23] border border-[#20232D] max-w-lg flex items-center justify-between gap-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">

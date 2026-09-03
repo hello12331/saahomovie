@@ -1,11 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Clock, Shield, Sparkles, AlertCircle, ChevronRight, Check } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
-export default function SeatSelectionPage({ params }: { params: { showId: string } }) {
+export default function SeatSelectionPage({ params }: { params: Promise<{ showId: string }> }) {
+  const resolvedParams = use(params);
+  const showId = resolvedParams.showId;
+
   const router = useRouter();
   const { user } = useApp();
   
@@ -19,7 +22,7 @@ export default function SeatSelectionPage({ params }: { params: { showId: string
   useEffect(() => {
     async function fetchSeats() {
       try {
-        const res = await fetch(`/api/shows/${params.showId}/seats`);
+        const res = await fetch(`/api/shows/${showId}/seats`);
         const data = await res.json();
         if (data.success) {
           setShow(data.show);
@@ -32,7 +35,7 @@ export default function SeatSelectionPage({ params }: { params: { showId: string
       }
     }
     fetchSeats();
-  }, [params.showId]);
+  }, [showId]);
 
   // Countdown timer effect
   useEffect(() => {
@@ -84,7 +87,7 @@ export default function SeatSelectionPage({ params }: { params: { showId: string
     // Call API to lock seats temporarily
     try {
       if (!isSelected) {
-        const res = await fetch(`/api/shows/${params.showId}/seats`, {
+        const res = await fetch(`/api/shows/${showId}/seats`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ seatIds: [seat.id], userId: user?.id || 'u_demo', action: 'LOCK' })
@@ -95,7 +98,7 @@ export default function SeatSelectionPage({ params }: { params: { showId: string
           setSelectedSeatIds(prev => prev.filter(id => id !== seat.id));
         }
       } else {
-        await fetch(`/api/shows/${params.showId}/seats`, {
+        await fetch(`/api/shows/${showId}/seats`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ seatIds: [seat.id], userId: user?.id || 'u_demo', action: 'UNLOCK' })
@@ -134,14 +137,14 @@ export default function SeatSelectionPage({ params }: { params: { showId: string
       }
     });
 
-    sessionStorage.setItem(`booking_${params.showId}`, JSON.stringify({
-      showId: params.showId,
+    sessionStorage.setItem(`booking_${showId}`, JSON.stringify({
+      showId: showId,
       seatIds: selectedSeatIds,
       seatPrices: seatPricesObj,
       show
     }));
 
-    router.push(`/booking/food/${params.showId}`);
+    router.push(`/booking/food/${showId}`);
   };
 
   const formatTimer = (sec: number) => {

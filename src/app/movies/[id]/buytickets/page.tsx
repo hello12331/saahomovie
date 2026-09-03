@@ -1,18 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { Calendar, Clock, MapPin, Sparkles, ChevronRight } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
-export default function BuyTicketsPage({ params }: { params: { id: string } }) {
+export default function BuyTicketsPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  const movieId = resolvedParams.id;
+
   const { city } = useApp();
   const [movie, setMovie] = useState<any>(null);
   const [shows, setShows] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(true);
 
-  // Generate next 4 dates
+  // Generate next 5 dates
   const dates = Array.from({ length: 5 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() + i);
@@ -28,8 +31,8 @@ export default function BuyTicketsPage({ params }: { params: { id: string } }) {
     async function fetchData() {
       try {
         const [resM, resS] = await Promise.all([
-          fetch(`/api/movies/${params.id}`),
-          fetch(`/api/shows?movieId=${params.id}&city=${encodeURIComponent(city)}`)
+          fetch(`/api/movies/${movieId}`),
+          fetch(`/api/shows?movieId=${movieId}&city=${encodeURIComponent(city)}`)
         ]);
         const dataM = await resM.json();
         const dataS = await resS.json();
@@ -43,7 +46,7 @@ export default function BuyTicketsPage({ params }: { params: { id: string } }) {
       }
     }
     fetchData();
-  }, [params.id, city]);
+  }, [movieId, city]);
 
   if (loading || !movie) {
     return <div className="max-w-7xl mx-auto px-4 py-20 text-center text-slate-400">Loading showtimes...</div>;

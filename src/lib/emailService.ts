@@ -1,8 +1,7 @@
 const { execute, query } = require('@/lib/db');
 const nodemailer = require('nodemailer');
+import { EMAILJS_CONFIG } from './emailjsConfig';
 
-// Abstracted Email Provider Adapter
-// Supports Nodemailer SMTP (Gmail / SMTP / Custom), EmailJS API parameters, and fallback console/log mode for dev
 export async function sendEmail({
   to,
   subject,
@@ -10,7 +9,8 @@ export async function sendEmail({
   text = '',
   emailType = 'SYSTEM',
   userId = null,
-  bookingId = null
+  bookingId = null,
+  templateParams = {}
 }: {
   to: string;
   subject: string;
@@ -19,14 +19,44 @@ export async function sendEmail({
   emailType?: string;
   userId?: string | null;
   bookingId?: string | null;
+  templateParams?: any;
 }) {
   const logId = 'elog_' + Date.now();
   let status = 'SENT';
   let errorMessage = null;
 
   try {
-    // 1. Try Nodemailer SMTP if env variables or standard config is present
-    const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
+    // 1. Try EmailJS API if SERVICE_ID service_766n4tq / API keys are passed
+    const serviceId = process.env.EMAILJS_SERVICE_ID || EMAILJS_CONFIG.serviceId;
+    const userIdKey = process.env.EMAILJS_PUBLIC_KEY || process.env.EMAILJS_USER_ID;
+
+    if (serviceId && userIdKey) {
+      const templateId = emailType.includes('OTP') ? EMAILJS_CONFIG.templateIdOtp : EMAILJS_CONFIG.templateIdBooking;
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: serviceId,
+          template_id: templateId,
+          user_id: userIdKey,
+          template_params: {
+            to_email: to,
+            subject: subject,
+            email: to,
+            message_html: html,
+            ...templateParams
+          }
+        })
+      });
+      if (res.ok) {
+        console.log(`[EmailJS Service] Email successfully sent via Service ${serviceId} to ${to}`);
+      } else {
+        const errTxt = await res.text();
+        console.warn(`[EmailJS Warning] Status ${res.status}: ${errTxt}`);
+      }
+    }
+
+    // 2. Try Nodemailer SMTP fallback if env SMTP variables are present
     const user = process.env.EMAIL_USERNAME || process.env.EMAIL_USER;
     const pass = process.env.EMAIL_PASSWORD || process.env.EMAIL_PASS;
 
@@ -43,22 +73,23 @@ export async function sendEmail({
         html,
         text
       });
-      console.log(`[Email Service] Live SMTP Email sent to ${to} for subject: ${subject}`);
+      console.log(`[SMTP Service] Email sent to ${to} for subject: ${subject}`);
     } else {
-      // 2. Safe Fallback Dev Mode (Logged securely in DB & Console)
-      console.log(`\n=================== [CINEGO EMAIL SERVICE] ===================`);
-      console.log(`TO: ${to}`);
+      // 3. Fallback Dev Mode Audit Output
+      console.log(`\n=================== [EMAIL SERVICE (Service ID: ${serviceId})] ===================`);
+      console.log(`RECIPIENT TO: ${to}`);
       console.log(`SUBJECT: ${subject}`);
       console.log(`TYPE: ${emailType}`);
-      console.log(`HTML CONTENT PREVIEW:\n${html.substring(0, 300)}...`);
-      console.log(`=============================================================\n`);
+      console.log(`SERVICE ID: ${serviceId}`);
+      console.log(`HTML PREVIEW:\n${html.substring(0, 350)}...`);
+      console.log(`=================================================================================\n`);
     }
   } catch (err: any) {
     status = 'FAILED';
-    errorMessage = err.message || 'SMTP Transmission failed';
-    console.error(`[Email Service Error] Failed to send email to ${to}:`, err);
+    errorMessage = err.message || 'Transmission failed';
+    console.error(`[Email Service Error] Failed sending to ${to}:`, err);
   } finally {
-    // 3. Always log attempt to EmailLog table for Admin Audit
+    // Log to EmailLog table
     try {
       await execute(`
         INSERT INTO EmailLog (id, userId, bookingId, emailType, recipient, subject, status, errorMessage)
@@ -86,11 +117,11 @@ export function generateOtpEmailHtml(userName: string, otp: string) {
         <p style="color: #A8ACB8; font-size: 14px;">Hello ${userName},</p>
         <p style="color: #A8ACB8; font-size: 14px;">Your one-time password (OTP) for signing in to CineGo is:</p>
         
-        <div style="background-color: #20232D; border: 2px border: #FF4D6D; color: #FF4D6D; font-size: 36px; font-weight: bold; letter-spacing: 8px; padding: 16px; border-radius: 8px; margin: 24px 0; display: inline-block;">
+        <div style="background-color: #20232D; border: 2px solid #FF4D6D; color: #FF4D6D; font-size: 36px; font-weight: bold; letter-spacing: 8px; padding: 16px; border-radius: 8px; margin: 24px 0; display: inline-block;">
           ${otp}
         </div>
         
-        <p style="color: #A8ACB8; font-size: 12px;">This OTP is valid for <strong>5 minutes</strong>. Do not share this code with anyone.</p>
+        <p style="color: #A8ACB8; font-size: 12px;">This OTP is valid for <strong>5 minutes</strong> till <strong>${new Date(Date.now() + 5*60*1000).toLocaleTimeString()}</strong>. Do not share this code with anyone.</p>
       </div>
       
       <p style="color: #666; font-size: 11px; text-align: center; margin-top: 24px;">Regards,<br>CineGo Team</p>
@@ -121,7 +152,7 @@ export function generateBookingConfirmationHtml(booking: any) {
         <p style="margin: 6px 0; font-size: 14px;"><strong>Ticket Price:</strong> ₹${booking.ticketAmount}</p>
         <p style="margin: 6px 0; font-size: 14px;"><strong>Food & Beverages:</strong> ₹${booking.foodAmount}</p>
         <p style="margin: 6px 0; font-size: 14px;"><strong>Convenience Fee & Taxes:</strong> ₹${booking.convenienceFee + booking.taxAmount}</p>
-        <p style="margin: 6px 0; font-size: 16px; color: #4ADE80; border-top: 1px solid #20232D; pt: 8px;"><strong>TOTAL PAID:</strong> ₹${booking.totalAmount}</p>
+        <p style="margin: 6px 0; font-size: 16px; color: #4ADE80; border-top: 1px solid #20232D; padding-top: 8px;"><strong>TOTAL PAID:</strong> ₹${booking.totalAmount}</p>
       </div>
 
       <p style="color: #A8ACB8; font-size: 12px; text-align: center;">Please show your digital pass QR at cinema entry. Enjoy your show!</p>
