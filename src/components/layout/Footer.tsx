@@ -12,15 +12,15 @@ export default function Footer() {
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#FF4D6D] to-[#7C5CFC] flex items-center justify-center font-black text-white text-lg">
-                C
+                S
               </div>
-              <span className="text-xl font-extrabold text-white">Cine<span className="text-[#FF4D6D]">Go</span></span>
+              <span className="text-xl font-extrabold text-white">Saaho <span className="text-[#FF4D6D]">Movie Counter</span></span>
             </div>
             <p className="text-xs text-[#A8ACB8] leading-relaxed max-w-sm">
-              CineGo is your all-in-one entertainment destination for movie tickets, live concerts, sports events, comedy shows, and cinema dining.
+              Saaho Movie Counter is your official entertainment destination for movie tickets, live concerts, sports events, comedy shows, and cinema dining.
             </p>
             <p className="text-[11px] text-[#A8ACB8]">
-              © 2026 CineGo Platform. All rights reserved. Designed for premium experience.
+              © 2026 Saaho Movie Counter Platform. All rights reserved. Designed for premium experience.
             </p>
           </div>
 

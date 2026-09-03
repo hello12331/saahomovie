@@ -58,14 +58,14 @@ export default function Header() {
             <div className="flex items-center space-x-6 flex-1 max-w-3xl">
               <Link href="/" className="flex items-center space-x-2 flex-shrink-0">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FF4D6D] to-[#7C5CFC] flex items-center justify-center font-black text-white text-xl shadow-lg shadow-[#FF4D6D]/30">
-                  C
+                  S
                 </div>
                 <div>
                   <span className="text-2xl font-black tracking-wider text-white">
-                    Cine<span className="text-[#FF4D6D]">Go</span>
+                    Saaho <span className="text-[#FF4D6D]">Movie Counter</span>
                   </span>
                   <span className="block text-[8px] uppercase tracking-widest text-[#A8ACB8] -mt-1 font-bold">
-                    Your Entertainment
+                    Official Ticket Booking
                   </span>
                 </div>
               </Link>

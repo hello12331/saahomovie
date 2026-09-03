@@ -4,7 +4,7 @@ import { AppProvider } from '@/context/AppContext';
 import './globals.css';
 
 export const metadata = {
-  title: 'CineGo - Your Entertainment. One Place.',
+  title: 'Saaho Movie Counter - Your Entertainment. One Place.',
   description: 'Book movie tickets, live concerts, sports events, and cinema snacks with instant digital pass & OTP auth.',
 };
 
