@@ -29,6 +29,7 @@ export async function sendEmail({
     const serviceId = process.env.EMAILJS_SERVICE_ID || EMAILJS_CONFIG.serviceId;
     const templateId = EMAILJS_CONFIG.templateIdOtp;
     const publicKey = process.env.EMAILJS_PUBLIC_KEY || EMAILJS_CONFIG.publicKey;
+    const privateKey = process.env.EMAILJS_PRIVATE_KEY || EMAILJS_CONFIG.privateKey;
 
     // Send via EmailJS REST API
     const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
@@ -38,6 +39,7 @@ export async function sendEmail({
         service_id: serviceId,
         template_id: templateId,
         user_id: publicKey,
+        accessToken: privateKey,
         template_params: {
           to_email: to,
           email: to,
@@ -51,10 +53,10 @@ export async function sendEmail({
     });
 
     if (res.ok) {
-      console.log(`[EmailJS Service] Email successfully sent via Service ${serviceId} (Template: ${templateId}) to ${to}`);
+      console.log(`[EmailJS Success] Real email sent via Service ${serviceId} (Template: ${templateId}) to ${to}`);
     } else {
       const errTxt = await res.text();
-      console.warn(`[EmailJS Notice] Status ${res.status}: ${errTxt}`);
+      console.warn(`[EmailJS Response] Status ${res.status}: ${errTxt}`);
     }
 
     // SMTP Fallback if configured
@@ -75,12 +77,6 @@ export async function sendEmail({
         text
       });
       console.log(`[SMTP Service] Email sent to ${to} for subject: ${subject}`);
-    } else {
-      console.log(`\n=================== [EMAIL SERVICE (${serviceId} / ${templateId})] ===================`);
-      console.log(`RECIPIENT TO: ${to}`);
-      console.log(`SUBJECT: ${subject}`);
-      console.log(`PASSCODE: ${templateParams.otp || 'N/A'}`);
-      console.log(`=================================================================================\n`);
     }
   } catch (err: any) {
     status = 'FAILED';
