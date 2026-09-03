@@ -31,32 +31,38 @@ export async function sendEmail({
     const publicKey = process.env.EMAILJS_PUBLIC_KEY || EMAILJS_CONFIG.publicKey;
     const privateKey = process.env.EMAILJS_PRIVATE_KEY || EMAILJS_CONFIG.privateKey;
 
-    // Send via EmailJS REST API
+    // EmailJS REST API payload
+    const emailJsPayload = {
+      service_id: serviceId,
+      template_id: templateId,
+      user_id: publicKey,
+      accessToken: privateKey,
+      template_params: {
+        to_email: to,
+        email: to,
+        passcode: templateParams.otp || templateParams.passcode || '849201',
+        time: new Date(Date.now() + 15 * 60 * 1000).toLocaleTimeString(),
+        subject: subject,
+        message: text || html,
+        ...templateParams
+      }
+    };
+
+    console.log("[EmailJS Attempting Transmission]", JSON.stringify({ to, serviceId, templateId, publicKey }));
+
     const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        service_id: serviceId,
-        template_id: templateId,
-        user_id: publicKey,
-        accessToken: privateKey,
-        template_params: {
-          to_email: to,
-          email: to,
-          passcode: templateParams.otp || templateParams.passcode || '849201',
-          time: new Date(Date.now() + 15 * 60 * 1000).toLocaleTimeString(),
-          subject: subject,
-          message: text || html,
-          ...templateParams
-        }
-      })
+      body: JSON.stringify(emailJsPayload)
     });
 
-    if (res.ok) {
-      console.log(`[EmailJS Success] Real email sent via Service ${serviceId} (Template: ${templateId}) to ${to}`);
+    const resText = await res.text();
+    if (res.ok || resText === 'OK') {
+      console.log(`[EmailJS Success] Real email sent to ${to}!`);
     } else {
-      const errTxt = await res.text();
-      console.warn(`[EmailJS Response] Status ${res.status}: ${errTxt}`);
+      console.error(`[EmailJS Error Response] Status ${res.status}: ${resText}`);
+      status = 'FAILED';
+      errorMessage = `EmailJS ${res.status}: ${resText}`;
     }
 
     // SMTP Fallback if configured
@@ -81,7 +87,7 @@ export async function sendEmail({
   } catch (err: any) {
     status = 'FAILED';
     errorMessage = err.message || 'Transmission failed';
-    console.error(`[Email Service Error] Failed sending to ${to}:`, err);
+    console.error(`[Email Service Exception] Failed sending to ${to}:`, err);
   } finally {
     try {
       await execute(`
