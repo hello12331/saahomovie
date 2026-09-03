@@ -4,8 +4,20 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
-import { MapPin, Search, Menu, X, Coins, User, Shield, Ticket, LogOut, ChevronDown, Sparkles, Navigation } from 'lucide-[#lucide]' || 'lucide-react';
-import { MapPin as MapPinIcon, Search as SearchIcon, ChevronDown as ChevronDownIcon, X as XIcon } from 'lucide-react';
+import { 
+  MapPin as MapPinIcon, 
+  Search as SearchIcon, 
+  ChevronDown as ChevronDownIcon, 
+  X as XIcon, 
+  Menu, 
+  Coins, 
+  User, 
+  Shield, 
+  Ticket, 
+  LogOut, 
+  Sparkles, 
+  Navigation 
+} from 'lucide-react';
 
 const POPULAR_CITIES = [
   { name: "Mumbai", icon: "🏛️" },
@@ -145,7 +157,7 @@ export default function Header() {
               <Link href="/movies" className={`hover:text-[#FF4D6D] transition-colors ${pathname.startsWith('/movies') ? 'text-[#FF4D6D] font-bold' : 'text-slate-300'}`}>
                 Movies
               </Link>
-              <Link href="/events" className={`hover:text-[#FF4D6D] transition-colors ${pathname.startsWith('/events') ? 'text-[#FF4D6D] font-bold' : 'text-slate-300'}`}>
+              <Link href="/events" className={`hover:text-[#FF4D6D] transition-colors ${pathname.startsWith('/events') ? 'text-[#FF4D6D] font-bold' : 'text-slate-[#300]'}`}>
                 Stream / Events
               </Link>
               <Link href="/events?cat=THEATRE" className="text-slate-300 hover:text-[#FF4D6D]">
@@ -168,7 +180,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Popular Cities Region Selector Modal (matching BookMyShow reference screenshot) */}
+      {/* Popular Cities Region Selector Modal */}
       {isCityModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white text-slate-900 rounded-3xl max-w-2xl w-full p-6 space-y-6 relative animate-in fade-in zoom-in-95 shadow-2xl">
