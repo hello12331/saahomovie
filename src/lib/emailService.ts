@@ -164,3 +164,19 @@ export function generateBookingConfirmationHtml(booking: any) {
     </div>
   `;
 }
+
+// 3. Booking Cancellation Email Template
+export function generateCancellationHtml(booking: any, refundAmount: number) {
+  return `
+    <div style="font-family: Arial, sans-serif; background-color: #0F1117; color: #ffffff; padding: 40px 20px; max-width: 600px; margin: auto;">
+      <h1 style="color: #FF4D6D; text-align: center;">CineGo</h1>
+      <div style="background-color: #171A23; border: 1px solid #20232D; padding: 24px; border-radius: 12px;">
+        <h2 style="color: #F87171; margin-top: 0;">Booking Cancelled</h2>
+        <p style="font-size: 14px;">Booking ID: <strong>${booking.bookingCode}</strong></p>
+        <p style="font-size: 14px;">Original Amount: ₹${booking.totalAmount}</p>
+        <p style="font-size: 14px; color: #4ADE80;"><strong>Refund Amount (85%): ₹${refundAmount}</strong></p>
+        <p style="font-size: 12px; color: #A8ACB8;">Refund has been processed to your original payment method.</p>
+      </div>
+    </div>
+  `;
+}
