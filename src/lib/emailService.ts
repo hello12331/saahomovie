@@ -27,7 +27,11 @@ export async function sendEmail({
 
   try {
     const serviceId = process.env.EMAILJS_SERVICE_ID || EMAILJS_CONFIG.serviceId;
-    const templateId = EMAILJS_CONFIG.templateIdOtp; // template_7g5h46g
+    
+    // Choose correct template ID based on emailType (OTP vs Booking confirmation)
+    const isOtp = emailType.includes('OTP') || emailType === 'LOGIN' || emailType === 'SIGNUP';
+    const templateId = isOtp ? EMAILJS_CONFIG.templateIdOtp : EMAILJS_CONFIG.templateIdBooking;
+    
     const publicKey = process.env.EMAILJS_PUBLIC_KEY || EMAILJS_CONFIG.publicKey;
     const privateKey = process.env.EMAILJS_PRIVATE_KEY || EMAILJS_CONFIG.privateKey;
 
