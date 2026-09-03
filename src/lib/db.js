@@ -17,6 +17,22 @@ if (!fs.existsSync(dbPath)) {
   }
 }
 
+// Auto-migration check for missing columns on startup
+function ensureSchemaColumns() {
+  try {
+    const db = new sqlite3.Database(dbPath);
+    db.serialize(() => {
+      db.run(`ALTER TABLE Booking ADD COLUMN paymentMethod TEXT DEFAULT 'UPI'`, () => {});
+      db.run(`ALTER TABLE Booking ADD COLUMN isPaid INTEGER DEFAULT 1`, () => {});
+    });
+    db.close();
+  } catch (e) {
+    // Columns already exist
+  }
+}
+
+ensureSchemaColumns();
+
 function getDb() {
   return new sqlite3.Database(dbPath);
 }
