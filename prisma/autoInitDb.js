@@ -8,8 +8,6 @@ if (!fs.existsSync(prismaDir)) {
 }
 
 const dbPath = path.join(prismaDir, 'dev.db');
-
-// Ensure db exists and init tables if missing
 const db = new sqlite3.Database(dbPath);
 
 db.serialize(() => {
@@ -274,8 +272,8 @@ const movies = [
   {
     id: "m1",
     title: "Kalki 2898 AD",
-    poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&q=80",
-    backdrop: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&q=80",
+    poster: "https://m.media-amazon.com/images/M/MV5BMGRjZTQ0YzUtYWJjMS00OGY1LTkwNjMtYjYwZmFmNTY3MGZkXkEyXkFqcGc@._V1_.jpg",
+    backdrop: "https://m.media-amazon.com/images/M/MV5BMGRjZTQ0YzUtYWJjMS00OGY1LTkwNjMtYjYwZmFmNTY3MGZkXkEyXkFqcGc@._V1_.jpg",
     description: "A modern avatar of Vishnu descends to Earth to protect humanity from dark forces in a dystopian post-apocalyptic world.",
     genre: "Sci-Fi, Action, Drama",
     language: "Telugu, Hindi, Tamil",
@@ -294,8 +292,8 @@ const movies = [
   {
     id: "m2",
     title: "Devara: Part 1",
-    poster: "https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=600&q=80",
-    backdrop: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200&q=80",
+    poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXMHlqPQaoVX0l-aK2tHtstkHE53pJsfxhq-K51tSDpw&s=10",
+    backdrop: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXMHlqPQaoVX0l-aK2tHtstkHE53pJsfxhq-K51tSDpw&s=10",
     description: "An epic action saga set against coastal lands, chronicling fearlessness, vengeance and power.",
     genre: "Action, Thriller, Drama",
     language: "Telugu, Hindi",
@@ -314,8 +312,8 @@ const movies = [
   {
     id: "m3",
     title: "Pushpa 2: The Rule",
-    poster: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=600&q=80",
-    backdrop: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&q=80",
+    poster: "https://i.pinimg.com/736x/96/d9/dd/96d9ddf3c81ff8b76eaa4f064b55377b.jpg",
+    backdrop: "https://i.pinimg.com/736x/96/d9/dd/96d9ddf3c81ff8b76eaa4f064b55377b.jpg",
     description: "The clash between Pushpa Raj and Bhanwar Singh Shekhawat intensifies as Pushpa expands his red sandalwood empire.",
     genre: "Action, Crime, Thriller",
     language: "Telugu, Hindi, Tamil, Malayalam",
@@ -342,7 +340,7 @@ const cinemas = [
 const foodItems = [
   { id: "f1", name: "Caramel Popcorn (Large)", category: "Popcorn", image: "https://images.unsplash.com/photo-1578849278619-e73505e9610f?w=500&q=80", description: "Freshly popped jumbo corn tossed in rich caramelized butter.", price: 290 },
   { id: "f2", name: "Salted Butter Popcorn (Regular)", category: "Popcorn", image: "https://images.unsplash.com/photo-1585647347384-2593bc35786b?w=500&q=80", description: "Classic hot salted butter popcorn.", price: 220 },
-  { id: "f3", name: "CineGo Ultimate Movie Combo", category: "Combos", image: "https://images.unsplash.com/photo-1572177812156-58036aae439c?w=500&q=80", description: "1 Large Popcorn + 2 Cold Drinks + 1 Nachos with Cheese.", price: 590 }
+  { id: "f3", name: "Saaho Movie Counter Ultimate Combo", category: "Combos", image: "https://images.unsplash.com/photo-1572177812156-58036aae439c?w=500&q=80", description: "1 Large Popcorn + 2 Cold Drinks + 1 Nachos with Cheese.", price: 590 }
 ];
 
 const coupons = [
@@ -357,46 +355,46 @@ const events = [
 ];
 
 db.serialize(() => {
-  const userStmt = db.prepare(`INSERT OR IGNORE INTO User (id, name, email, passwordHash, phone, role, savedCity, cineCoinsBalance, seatPreference) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-  userStmt.run("u_admin", "CineGo Admin", "admin@cinego.com", "$2a$10$wEa7Q39p8.dI9e1uGz2uXe.5J3yB4u/J8kK5P6u7m8n9o0p1q2r3s", "9999999999", "ADMIN", "Hyderabad", 500, "CENTER");
-  userStmt.run("u_demo", "Rahul Sharma", "user@cinego.com", "$2a$10$wEa7Q39p8.dI9e1uGz2uXe.5J3yB4u/J8kK5P6u7m8n9o0p1q2r3s", "9876543210", "USER", "Hyderabad", 120, "BACK");
+  const userStmt = db.prepare(`INSERT OR REPLACE INTO User (id, name, email, passwordHash, phone, role, savedCity, cineCoinsBalance, seatPreference) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+  userStmt.run("u_admin", "Admin", "admin@saahomovie.com", "$2a$10$wEa7Q39p8.dI9e1uGz2uXe.5J3yB4u/J8kK5P6u7m8n9o0p1q2r3s", "9999999999", "ADMIN", "Hyderabad", 500, "CENTER");
+  userStmt.run("u_demo", "Rahul Sharma", "user@saahomovie.com", "$2a$10$wEa7Q39p8.dI9e1uGz2uXe.5J3yB4u/J8kK5P6u7m8n9o0p1q2r3s", "9876543210", "USER", "Hyderabad", 120, "BACK");
   userStmt.finalize();
 
-  const movieStmt = db.prepare(`INSERT OR IGNORE INTO Movie (id, title, poster, backdrop, description, genre, language, durationMins, certification, releaseDate, cast, crew, trailerUrl, rating, ratingCount, isPublished, isTrending, isUpcoming) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+  const movieStmt = db.prepare(`INSERT OR REPLACE INTO Movie (id, title, poster, backdrop, description, genre, language, durationMins, certification, releaseDate, cast, crew, trailerUrl, rating, ratingCount, isPublished, isTrending, isUpcoming) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
   movies.forEach(m => {
     movieStmt.run(m.id, m.title, m.poster, m.backdrop, m.description, m.genre, m.language, m.durationMins, m.certification, m.releaseDate, m.cast, m.crew, m.trailerUrl, m.rating, m.ratingCount, m.isPublished, m.isTrending, m.isUpcoming);
   });
   movieStmt.finalize();
 
-  const cinemaStmt = db.prepare(`INSERT OR IGNORE INTO Cinema (id, name, city, address, facilities) VALUES (?, ?, ?, ?, ?)`);
+  const cinemaStmt = db.prepare(`INSERT OR REPLACE INTO Cinema (id, name, city, address, facilities) VALUES (?, ?, ?, ?, ?)`);
   cinemas.forEach(c => {
     cinemaStmt.run(c.id, c.name, c.city, c.address, c.facilities);
   });
   cinemaStmt.finalize();
 
-  const foodStmt = db.prepare(`INSERT OR IGNORE INTO FoodItem (id, name, category, image, description, price) VALUES (?, ?, ?, ?, ?, ?)`);
+  const foodStmt = db.prepare(`INSERT OR REPLACE INTO FoodItem (id, name, category, image, description, price) VALUES (?, ?, ?, ?, ?, ?)`);
   foodItems.forEach(f => {
     foodStmt.run(f.id, f.name, f.category, f.image, f.description, f.price);
   });
   foodStmt.finalize();
 
-  const couponStmt = db.prepare(`INSERT OR IGNORE INTO Coupon (id, code, description, discountType, discountVal, minAmount, maxDiscount, validUntil) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
+  const couponStmt = db.prepare(`INSERT OR REPLACE INTO Coupon (id, code, description, discountType, discountVal, minAmount, maxDiscount, validUntil) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
   coupons.forEach(cp => {
     couponStmt.run(cp.id, cp.code, cp.description, cp.discountType, cp.discountVal, cp.minAmount, cp.maxDiscount, cp.validUntil);
   });
   couponStmt.finalize();
 
-  const eventStmt = db.prepare(`INSERT OR IGNORE INTO Event (id, title, category, banner, description, venue, city, eventDate, startTime, durationMins, organizer, price, capacity, isFeatured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+  const eventStmt = db.prepare(`INSERT OR REPLACE INTO Event (id, title, category, banner, description, venue, city, eventDate, startTime, durationMins, organizer, price, capacity, isFeatured) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
   events.forEach(e => {
     eventStmt.run(e.id, e.title, e.category, e.banner, e.description, e.venue, e.city, e.eventDate, e.startTime, e.durationMins, e.organizer, e.price, e.capacity, e.isFeatured);
   });
   eventStmt.finalize();
 
-  db.run(`INSERT OR IGNORE INTO Screen (id, cinemaId, name, screenType, totalRows, seatsPerRow) VALUES ('s1', 'c1', 'Screen 1 (IMAX)', 'IMAX 3D', 8, 12)`);
-  db.run(`INSERT OR IGNORE INTO Screen (id, cinemaId, name, screenType, totalRows, seatsPerRow) VALUES ('s2', 'c1', 'Screen 2 (Dolby Atmos)', '2D', 8, 12)`);
+  db.run(`INSERT OR REPLACE INTO Screen (id, cinemaId, name, screenType, totalRows, seatsPerRow) VALUES ('s1', 'c1', 'Screen 1 (IMAX)', 'IMAX 3D', 8, 12)`);
+  db.run(`INSERT OR REPLACE INTO Screen (id, cinemaId, name, screenType, totalRows, seatsPerRow) VALUES ('s2', 'c1', 'Screen 2 (Dolby Atmos)', '2D', 8, 12)`);
 
   const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-  const seatStmt = db.prepare(`INSERT OR IGNORE INTO Seat (id, screenId, rowLabel, seatNumber, category) VALUES (?, ?, ?, ?, ?)`);
+  const seatStmt = db.prepare(`INSERT OR REPLACE INTO Seat (id, screenId, rowLabel, seatNumber, category) VALUES (?, ?, ?, ?, ?)`);
   rows.forEach((row, rIdx) => {
     let cat = "REGULAR";
     if (rIdx >= 6) cat = "VIP";
@@ -411,10 +409,11 @@ db.serialize(() => {
   seatStmt.finalize();
 
   const todayStr = new Date().toISOString().split('T')[0];
-  const showStmt = db.prepare(`INSERT OR IGNORE INTO Show (id, movieId, cinemaId, screenId, startTime, endTime, format, language, vipPrice, premiumPrice, execPrice, regularPrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
+  const showStmt = db.prepare(`INSERT OR REPLACE INTO Show (id, movieId, cinemaId, screenId, startTime, endTime, format, language, vipPrice, premiumPrice, execPrice, regularPrice) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
   showStmt.run("show_1", "m1", "c1", "s1", `${todayStr}T14:30:00.000Z`, `${todayStr}T17:30:00.000Z`, "IMAX 3D", "Telugu", 450, 350, 250, 180);
   showStmt.run("show_2", "m1", "c1", "s1", `${todayStr}T18:30:00.000Z`, `${todayStr}T21:30:00.000Z`, "IMAX 3D", "Telugu", 450, 350, 250, 180);
   showStmt.run("show_3", "m2", "c1", "s2", `${todayStr}T15:00:00.000Z`, `${todayStr}T18:00:00.000Z`, "2D", "Telugu", 400, 300, 220, 150);
+  showStmt.run("show_4", "m3", "c1", "s1", `${todayStr}T20:00:00.000Z`, `${todayStr}T23:00:00.000Z`, "IMAX 3D", "Telugu", 500, 400, 300, 200);
   showStmt.finalize();
 
   console.log("Database initialized & seeded automatically for Cloud Deployment!");

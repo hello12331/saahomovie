@@ -41,18 +41,18 @@ function MoviesContent() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-slate-50 text-slate-900">
       
       {/* Banner Strip */}
-      <div className="w-full rounded-2xl overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-[#20232D] shadow-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="w-full rounded-2xl overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2 max-w-xl">
-          <span className="px-3 py-1 rounded-md bg-[#FF4D6D] text-white text-[10px] font-black uppercase tracking-wider">
+          <span className="px-3 py-1 rounded-md bg-[#F84464] text-white text-[10px] font-black uppercase tracking-wider">
             FEATURED RELEASE
           </span>
           <h2 className="text-3xl font-black text-white">The Stakes Just Got Real!</h2>
           <p className="text-xs text-slate-300">Place your bet in cinemas. Get assured cashback up to ₹100 on tickets.</p>
         </div>
-        <Link href="/movies/m1/buytickets" className="px-6 py-3.5 rounded-xl bg-[#FF4D6D] hover:bg-[#ff3358] text-white text-xs font-bold shadow-lg shadow-[#FF4D6D]/30 flex-shrink-0">
+        <Link href="/movies/m1/buytickets" className="px-6 py-3.5 rounded-xl bg-[#F84464] hover:bg-[#e03352] text-white text-xs font-bold shadow-lg shadow-[#F84464]/30 flex-shrink-0">
           Book Tickets
         </Link>
       </div>
@@ -62,17 +62,17 @@ function MoviesContent() {
         {/* Left Column: Sidebar Filters */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-black text-white">Filters</h2>
-            <button onClick={() => { setSelectedGenre('ALL'); setSelectedLanguage('ALL'); }} className="text-xs text-[#FF4D6D] font-bold hover:underline">
+            <h2 className="text-xl font-black text-slate-900">Filters</h2>
+            <button onClick={() => { setSelectedGenre('ALL'); setSelectedLanguage('ALL'); }} className="text-xs text-[#F84464] font-bold hover:underline">
               Clear All
             </button>
           </div>
 
           {/* Languages Accordion Box */}
-          <div className="bg-[#171A23] p-5 rounded-2xl border border-[#20232D] space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold text-white">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-900">
               <span>Languages</span>
-              <span className="text-[#FF4D6D] text-[10px]">Clear</span>
+              <span className="text-[#F84464] text-[10px]">Clear</span>
             </div>
             <div className="flex flex-wrap gap-2 pt-1">
               {['Telugu', 'Hindi', 'English', 'Tamil'].map(lang => (
@@ -81,8 +81,8 @@ function MoviesContent() {
                   onClick={() => setSelectedLanguage(selectedLanguage === lang ? 'ALL' : lang)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                     selectedLanguage === lang
-                      ? 'bg-[#FF4D6D]/20 border-[#FF4D6D] text-[#FF4D6D]'
-                      : 'bg-[#20232D] border-[#20232D] text-slate-300 hover:border-[#FF4D6D]/40'
+                      ? 'bg-rose-50 border-[#F84464] text-[#F84464]'
+                      : 'bg-slate-100 border-slate-200 text-slate-700 hover:border-[#F84464]/40'
                   }`}
                 >
                   {lang}
@@ -92,10 +92,10 @@ function MoviesContent() {
           </div>
 
           {/* Genres Accordion Box */}
-          <div className="bg-[#171A23] p-5 rounded-2xl border border-[#20232D] space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold text-white">
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-900">
               <span>Genres</span>
-              <span className="text-[#FF4D6D] text-[10px]">Clear</span>
+              <span className="text-[#F84464] text-[10px]">Clear</span>
             </div>
             <div className="flex flex-wrap gap-2 pt-1">
               {['Action', 'Sci-Fi', 'Drama', 'Thriller', 'Crime'].map(g => (
@@ -104,8 +104,8 @@ function MoviesContent() {
                   onClick={() => setSelectedGenre(selectedGenre === g ? 'ALL' : g)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                     selectedGenre === g
-                      ? 'bg-[#FF4D6D]/20 border-[#FF4D6D] text-[#FF4D6D]'
-                      : 'bg-[#20232D] border-[#20232D] text-slate-300 hover:border-[#FF4D6D]/40'
+                      ? 'bg-rose-50 border-[#F84464] text-[#F84464]'
+                      : 'bg-slate-100 border-slate-200 text-slate-700 hover:border-[#F84464]/40'
                   }`}
                 >
                   {g}
@@ -114,7 +114,7 @@ function MoviesContent() {
             </div>
           </div>
 
-          <Link href="/movies" className="w-full py-3 rounded-xl border border-[#FF4D6D] text-[#FF4D6D] text-xs font-bold text-center block hover:bg-[#FF4D6D] hover:text-white transition-colors">
+          <Link href="/movies" className="w-full py-3 rounded-xl border border-[#F84464] text-[#F84464] text-xs font-bold text-center block hover:bg-[#F84464] hover:text-white transition-colors">
             Browse by Cinemas
           </Link>
         </div>
@@ -122,21 +122,21 @@ function MoviesContent() {
         {/* Right Column: Movies Grid & Coming Soon Header */}
         <div className="lg:col-span-3 space-y-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-black text-white">Movies In {city}</h1>
+            <h1 className="text-2xl font-black text-slate-900">Movies In {city}</h1>
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold text-[#FF4D6D] px-3 py-1 rounded-full bg-[#FF4D6D]/20 border border-[#FF4D6D]/40">
+              <span className="text-xs font-bold text-[#F84464] px-3 py-1 rounded-full bg-rose-50 border border-rose-200">
                 {selectedLanguage !== 'ALL' ? selectedLanguage : 'All Languages'}
               </span>
             </div>
           </div>
 
           {/* Coming Soon Carousel Banner */}
-          <div className="p-5 rounded-2xl bg-gradient-to-r from-[#171A23] to-[#20232D] border border-[#20232D] flex items-center justify-between">
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
             <div className="space-y-1">
-              <h3 className="text-sm font-bold text-white">Coming Soon</h3>
-              <p className="text-xs text-[#A8ACB8]">Explore upcoming releases in {city}</p>
+              <h3 className="text-sm font-bold text-slate-900">Coming Soon</h3>
+              <p className="text-xs text-slate-500">Explore upcoming releases in {city}</p>
             </div>
-            <button onClick={() => setActiveTab('upcoming')} className="text-xs font-bold text-[#FF4D6D] hover:underline flex items-center space-x-1">
+            <button onClick={() => setActiveTab('upcoming')} className="text-xs font-bold text-[#F84464] hover:underline flex items-center space-x-1">
               <span>Explore Upcoming Movies</span>
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -146,8 +146,8 @@ function MoviesContent() {
           {filteredMovies.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
               {filteredMovies.map(movie => (
-                <div key={movie.id} className="group flex flex-col bg-[#20232D] rounded-2xl overflow-hidden border border-[#20232D] hover:border-[#FF4D6D]/40 transition-all duration-300 hover:-translate-y-1.5 shadow-lg">
-                  <div className="relative aspect-[2/3] w-full overflow-hidden bg-[#171A23]">
+                <div key={movie.id} className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-[#F84464]/40 transition-all duration-300 hover:-translate-y-1.5 shadow-md">
+                  <div className="relative aspect-[2/3] w-full overflow-hidden bg-slate-100">
                     <img 
                       src={movie.poster} 
                       alt={movie.title}
@@ -163,7 +163,7 @@ function MoviesContent() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                       <Link
                         href={`/movies/${movie.id}/buytickets`}
-                        className="w-full py-2.5 rounded-xl bg-[#FF4D6D] text-white text-xs font-bold text-center shadow-lg shadow-[#FF4D6D]/30"
+                        className="w-full py-2.5 rounded-xl bg-[#F84464] text-white text-xs font-bold text-center shadow-lg shadow-[#F84464]/30"
                       >
                         Book Tickets
                       </Link>
@@ -171,18 +171,18 @@ function MoviesContent() {
                   </div>
                   <div className="p-4 space-y-1 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="font-bold text-white text-sm line-clamp-1 group-hover:text-[#FF4D6D] transition-colors">{movie.title}</h3>
-                      <p className="text-[11px] text-[#A8ACB8]">{movie.certification || 'UA16+'}</p>
+                      <h3 className="font-bold text-slate-900 text-sm line-clamp-1 group-hover:text-[#F84464] transition-colors">{movie.title}</h3>
+                      <p className="text-[11px] text-slate-500">{movie.certification || 'UA16+'}</p>
                     </div>
-                    <p className="text-[11px] text-[#A8ACB8] truncate">{movie.language}</p>
+                    <p className="text-[11px] text-slate-500 truncate">{movie.language}</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="py-16 text-center space-y-3 bg-[#171A23] rounded-3xl border border-[#20232D]">
-              <p className="text-base font-bold text-slate-300">No movies found matching filters.</p>
-              <button onClick={() => { setSelectedGenre('ALL'); setSelectedLanguage('ALL'); }} className="text-xs text-[#FF4D6D] font-bold hover:underline">
+            <div className="py-16 text-center space-y-3 bg-white rounded-3xl border border-slate-200 shadow-sm">
+              <p className="text-base font-bold text-slate-700">No movies found matching filters.</p>
+              <button onClick={() => { setSelectedGenre('ALL'); setSelectedLanguage('ALL'); }} className="text-xs text-[#F84464] font-bold hover:underline">
                 Reset Filters
               </button>
             </div>
@@ -196,7 +196,7 @@ function MoviesContent() {
 
 export default function MoviesPage() {
   return (
-    <Suspense fallback={<div className="p-12 text-center text-slate-400">Loading movies page...</div>}>
+    <Suspense fallback={<div className="p-12 text-center text-slate-500">Loading movies page...</div>}>
       <MoviesContent />
     </Suspense>
   );
