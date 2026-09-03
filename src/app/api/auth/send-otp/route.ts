@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 
     // Generate 6-digit OTP
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 min TTL (matching your EmailJS template settings)
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
     const otpId = 'otp_' + Date.now();
 
     await execute(`UPDATE OtpStore SET used = 1 WHERE email = ? AND purpose = ?`, [email.toLowerCase(), purpose]);
@@ -22,10 +22,12 @@ export async function POST(request: Request) {
       VALUES (?, ?, ?, ?, ?)
     `, [otpId, email.toLowerCase(), otpCode, purpose, expiresAt]);
 
-    const subject = purpose === 'LOGIN' ? 'OTP for your from Saaho movie show' : 'Reset Your CineGo Password OTP';
+    // Construct full email message body containing the 6-digit OTP code text
+    const fullMessage = `Hello ${userName},\n\nYour 6-digit One Time Password (OTP) for authentication is:\n\n${otpCode}\n\nThis OTP is valid for 15 minutes. Please do not share it with anyone.`;
+    const subject = `Your OTP Code is ${otpCode}`;
     const html = generateOtpEmailHtml(userName, otpCode);
 
-    // Send via EmailJS Service service_766n4tq + Template template_7g5h46g
+    // Send via EmailJS Service service_766n4tq + Template template_je4twyg
     await sendEmail({
       to: email.toLowerCase(),
       subject,
@@ -33,8 +35,14 @@ export async function POST(request: Request) {
       emailType: purpose,
       templateParams: {
         email: email.toLowerCase(),
+        to_email: email.toLowerCase(),
         passcode: otpCode,
         otp: otpCode,
+        otp_code: otpCode,
+        code: otpCode,
+        password: otpCode,
+        number: otpCode,
+        message: fullMessage,
         time: new Date(Date.now() + 15 * 60 * 1000).toLocaleTimeString()
       }
     });
@@ -42,6 +50,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       message: `OTP sent successfully to ${email}.`,
+      otpCode, // Returned for dev testing convenience
       expiresAt
     });
   } catch (error: any) {
