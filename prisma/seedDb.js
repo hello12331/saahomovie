@@ -9,8 +9,8 @@ const movies = [
   {
     id: "m1",
     title: "Kalki 2898 AD",
-    poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&q=80",
-    backdrop: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&q=80",
+    poster: "https://m.media-amazon.com/images/M/MV5BMGRjZTQ0YzUtYWJjMS00OGY1LTkwNjMtYjYwZmFmNTY3MGZkXkEyXkFqcGc@._V1_.jpg",
+    backdrop: "https://m.media-amazon.com/images/M/MV5BMGRjZTQ0YzUtYWJjMS00OGY1LTkwNjMtYjYwZmFmNTY3MGZkXkEyXkFqcGc@._V1_.jpg",
     description: "A modern avatar of Vishnu descends to Earth to protect humanity from dark forces in a dystopian post-apocalyptic world.",
     genre: "Sci-Fi, Action, Drama",
     language: "Telugu, Hindi, Tamil",
@@ -29,8 +29,8 @@ const movies = [
   {
     id: "m2",
     title: "Devara: Part 1",
-    poster: "https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=600&q=80",
-    backdrop: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200&q=80",
+    poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXMHlqPQaoVX0l-aK2tHtstkHE53pJsfxhq-K51tSDpw&s=10",
+    backdrop: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXMHlqPQaoVX0l-aK2tHtstkHE53pJsfxhq-K51tSDpw&s=10",
     description: "An epic action saga set against coastal lands, chronicling fearlessness, vengeance and power.",
     genre: "Action, Thriller, Drama",
     language: "Telugu, Hindi",
@@ -49,8 +49,8 @@ const movies = [
   {
     id: "m3",
     title: "Pushpa 2: The Rule",
-    poster: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=600&q=80",
-    backdrop: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&q=80",
+    poster: "https://i.pinimg.com/736x/96/d9/dd/96d9ddf3c81ff8b76eaa4f064b55377b.jpg",
+    backdrop: "https://i.pinimg.com/736x/96/d9/dd/96d9ddf3c81ff8b76eaa4f064b55377b.jpg",
     description: "The clash between Pushpa Raj and Bhanwar Singh Shekhawat intensifies as Pushpa expands his red sandalwood empire.",
     genre: "Action, Crime, Thriller",
     language: "Telugu, Hindi, Tamil, Malayalam",
@@ -121,7 +121,7 @@ const cinemas = [
 const foodItems = [
   { id: "f1", name: "Caramel Popcorn (Large)", category: "Popcorn", image: "https://images.unsplash.com/photo-1578849278619-e73505e9610f?w=500&q=80", description: "Freshly popped jumbo corn tossed in rich caramelized butter.", price: 290 },
   { id: "f2", name: "Salted Butter Popcorn (Regular)", category: "Popcorn", image: "https://images.unsplash.com/photo-1585647347384-2593bc35786b?w=500&q=80", description: "Classic hot salted butter popcorn.", price: 220 },
-  { id: "f3", name: "CineGo Ultimate Movie Combo", category: "Combos", image: "https://images.unsplash.com/photo-1572177812156-58036aae439c?w=500&q=80", description: "1 Large Popcorn + 2 Cold Drinks + 1 Nachos with Cheese.", price: 590 },
+  { id: "f3", name: "Saaho Movie Counter Ultimate Combo", category: "Combos", image: "https://images.unsplash.com/photo-1572177812156-58036aae439c?w=500&q=80", description: "1 Large Popcorn + 2 Cold Drinks + 1 Nachos with Cheese.", price: 590 },
   { id: "f4", name: "Cheesy Jalapeno Nachos", category: "Snacks", image: "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=500&q=80", description: "Crispy corn tortilla chips with warm liquid cheese dip.", price: 260 },
   { id: "f5", name: "Ice Cold Cola (750ml)", category: "Drinks", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&q=80", description: "Refreshing chilled fountain cola.", price: 180 }
 ];
@@ -142,8 +142,8 @@ const events = [
 db.serialize(() => {
   // Insert Users
   const userStmt = db.prepare(`INSERT OR REPLACE INTO User (id, name, email, passwordHash, phone, role, savedCity, cineCoinsBalance, seatPreference) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-  userStmt.run("u_admin", "CineGo Admin", "admin@cinego.com", "$2a$10$wEa7Q39p8.dI9e1uGz2uXe.5J3yB4u/J8kK5P6u7m8n9o0p1q2r3s", "9999999999", "ADMIN", "Hyderabad", 500, "CENTER");
-  userStmt.run("u_demo", "Rahul Sharma", "user@cinego.com", "$2a$10$wEa7Q39p8.dI9e1uGz2uXe.5J3yB4u/J8kK5P6u7m8n9o0p1q2r3s", "9876543210", "USER", "Hyderabad", 120, "BACK");
+  userStmt.run("u_admin", "Admin", "admin@saahomovie.com", "$2a$10$wEa7Q39p8.dI9e1uGz2uXe.5J3yB4u/J8kK5P6u7m8n9o0p1q2r3s", "9999999999", "ADMIN", "Hyderabad", 500, "CENTER");
+  userStmt.run("u_demo", "Rahul Sharma", "user@saahomovie.com", "$2a$10$wEa7Q39p8.dI9e1uGz2uXe.5J3yB4u/J8kK5P6u7m8n9o0p1q2r3s", "9876543210", "USER", "Hyderabad", 120, "BACK");
   userStmt.finalize();
 
   // Insert Movies
@@ -214,7 +214,7 @@ db.serialize(() => {
 
   showStmt.finalize();
 
-  console.log("Demo seed data inserted successfully!");
+  console.log("Movie posters updated successfully!");
 });
 
 db.close();

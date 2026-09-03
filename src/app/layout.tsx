@@ -18,7 +18,7 @@ export default function RootLayout({
       <head>
         <link rel="stylesheet" href="/globals.css" />
       </head>
-      <body className="min-h-screen flex flex-col bg-[#0F1117] text-white antialiased">
+      <body className="min-h-screen flex flex-col bg-[#F4F6F9] text-slate-900 antialiased">
         <AppProvider>
           <Header />
           <main className="flex-1">

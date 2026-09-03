@@ -3,18 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --bg-main: #0F1117;
-  --bg-card: #20232D;
-  --bg-secondary: #171A23;
-  --accent-primary: #FF4D6D;
-  --accent-secondary: #7C5CFC;
-  --text-main: #FFFFFF;
-  --text-muted: #A8ACB8;
+  --bg-main: #F4F6F9;
+  --bg-card: #FFFFFF;
+  --bg-secondary: #EBF0F5;
+  --accent-primary: #F84464;
+  --accent-secondary: #6B46C1;
+  --text-main: #1F2533;
+  --text-muted: #666666;
 }
 
 body {
-  background-color: var(--bg-main);
-  color: var(--text-main);
+  background-color: #F4F6F9;
+  color: #1F2533;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   overflow-x: hidden;
 }
@@ -25,12 +25,12 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0F1117;
+  background: #F4F6F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #20232D;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF4D6D;
+  background: #F84464;
 }
